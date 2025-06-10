@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Lab - Laboratório de Vozes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #E9F1FA;
+            min-height: 100vh;
+            color: #202124;
+        }
+
+        .header {
+            background: #FFFFFF;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid rgba(0, 171, 228, 0.2);
+            box-shadow: 0 2px 10px rgba(0, 171, 228, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: #202124;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .logo i {
+            font-size: 2rem;
+            color: #00ABE4;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #202124;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: rgba(0, 171, 228, 0.1);
+            color: #00ABE4;
+            transform: translateY(-2px);
+        }
+
+        .classic-tts-link {
+            background: #00ABE4;
+            color: #FFFFFF;
+            font-weight: 600;
+        }
+
+        .classic-tts-link:hover {
+            background: #0099CC;
+            color: #FFFFFF;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .controls-section {
+            background: #FFFFFF;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 2px solid rgba(0, 171, 228, 0.2);
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 171, 228, 0.1);
+        }
+
+        .section-title {
+            color: #202124;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            color: #202124;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .filter-input {
+            background: #FFFFFF;
+            border: 2px solid rgba(0, 171, 228, 0.2);
+            border-radius: 8px;
+            padding: 0.8rem;
+            font-size: 1rem;
+            color: #202124;
+            transition: all 0.3s ease;
+            width: 100%;
+            font-family: inherit;
+        }
+
+        .filter-input:focus {
+            outline: none;
+            border-color: #00ABE4;
+            box-shadow: 0 0 0 3px rgba(0, 171, 228, 0.2);
+        }
+
+        .search-bar {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            font-size: 1.1rem;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .search-bar:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .action-button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .action-button.secondary {
+            background: linear-gradient(45deg, #4ade80, #22c55e);
+        }
+
+        .action-button.danger {
+            background: linear-gradient(45deg, #f87171, #ef4444);
+        }
+
+        .voices-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .voice-card {
+            background: #FFFFFF;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 2px solid rgba(0, 171, 228, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 171, 228, 0.1);
+        }
+
+        .voice-card:hover {
+            transform: translateY(-5px);
+            border-color: #00ABE4;
+            box-shadow: 0 8px 15px rgba(0, 171, 228, 0.2);
+        }
+
+        .voice-card.selected {
+            border-color: rgba(102, 126, 234, 0.8);
+            background: rgba(102, 126, 234, 0.2);
+        }
+
+        .voice-card.gemini {
+            border-left: 4px solid #ff6b6b;
+        }
+
+        .voice-card.google-cloud {
+            border-left: 4px solid #4ecdc4;
+        }
+
+        .voice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .voice-name {
+            color: #202124;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .voice-system {
+            background: rgba(0, 171, 228, 0.1);
+            color: #00ABE4;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border: 1px solid rgba(0, 171, 228, 0.3);
+        }
+
+        .voice-system.gemini {
+            background: rgba(255, 107, 107, 0.3);
+        }
+
+        .voice-system.google-cloud {
+            background: rgba(78, 205, 196, 0.3);
+        }
+
+        .voice-details {
+            color: #5F6368;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .voice-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .voice-tag {
+            background: rgba(0, 171, 228, 0.1);
+            color: #00ABE4;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            border: 1px solid rgba(0, 171, 228, 0.3);
+            font-weight: 500;
+        }
+
+        .voice-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .voice-action {
+            background: rgba(0, 171, 228, 0.1);
+            color: #00ABE4;
+            border: 1px solid rgba(0, 171, 228, 0.3);
+            padding: 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+        }
+
+        .voice-action:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .stats-bar {
+            background: #FFFFFF;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            border: 2px solid rgba(0, 171, 228, 0.2);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 171, 228, 0.1);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            color: #202124;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            color: #5F6368;
+            font-size: 0.9rem;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: rgba(248, 113, 113, 0.2);
+            border: 1px solid rgba(248, 113, 113, 0.5);
+            color: #fecaca;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #5F6368;
+            padding: 3rem;
+            font-size: 1.1rem;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                justify-content: center;
+            }
+
+            .voices-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-bar {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-flask"></i>
+                <span>Voice Lab</span>
+            </div>
+            <nav class="nav-links">
+                <a href="/pages/dashboard.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/pages/gemini-studio.html" class="nav-link">
+                    <i class="fas fa-magic"></i>
+                    <span>Gemini Studio</span>
+                </a>
+                <a href="/pages/multi-speaker.html" class="nav-link">
+                    <i class="fas fa-users"></i>
+                    <span>Multi-Speaker</span>
+                </a>
+                <a href="/pages/api-docs.html" class="nav-link">
+                    <i class="fas fa-code"></i>
+                    <span>API Docs</span>
+                </a>
+                <a href="/client.html" class="nav-link classic-tts-link">
+                    <i class="fas fa-microphone-alt"></i>
+                    <span>TTS Clássico</span>
+                </a>
+                <a href="/auth/logout" class="nav-link">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Sair</span>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="controls-section">
+            <h2 class="section-title">
+                <i class="fas fa-search"></i>
+                Explorar Vozes
+            </h2>
+            
+            <input 
+                type="text" 
+                class="search-bar" 
+                id="search-input" 
+                placeholder="Buscar vozes por nome, estilo ou categoria..."
+                onkeyup="filterVoices()"
+            >
+
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label class="filter-label">Sistema</label>
+                    <select class="filter-input" id="system-filter" onchange="filterVoices()">
+                        <option value="">Todos os sistemas</option>
+                        <option value="gemini">Gemini TTS</option>
+                        <option value="google-cloud">Google Cloud TTS</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">Categoria</label>
+                    <select class="filter-input" id="category-filter" onchange="filterVoices()">
+                        <option value="">Todas as categorias</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">Estilo</label>
+                    <select class="filter-input" id="style-filter" onchange="filterVoices()">
+                        <option value="">Todos os estilos</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">Gênero</label>
+                    <select class="filter-input" id="gender-filter" onchange="filterVoices()">
+                        <option value="">Todos os gêneros</option>
+                        <option value="FEMALE">Feminino</option>
+                        <option value="MALE">Masculino</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-button" onclick="loadRandomVoices()">
+                    <i class="fas fa-random"></i>
+                    Vozes Aleatórias
+                </button>
+                <button class="action-button secondary" onclick="loadFavorites()">
+                    <i class="fas fa-star"></i>
+                    Favoritas
+                </button>
+                <button class="action-button" onclick="clearFilters()">
+                    <i class="fas fa-eraser"></i>
+                    Limpar Filtros
+                </button>
+                <button class="action-button danger" onclick="clearSelection()">
+                    <i class="fas fa-times"></i>
+                    Limpar Seleção
+                </button>
+            </div>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-number" id="total-voices">
+                    <div class="loading"></div>
+                </div>
+                <div class="stat-label">Total de Vozes</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="filtered-voices">0</div>
+                <div class="stat-label">Vozes Filtradas</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="selected-voices">0</div>
+                <div class="stat-label">Vozes Selecionadas</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="gemini-count">
+                    <div class="loading"></div>
+                </div>
+                <div class="stat-label">Vozes Gemini</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="google-count">
+                    <div class="loading"></div>
+                </div>
+                <div class="stat-label">Vozes Google Cloud</div>
+            </div>
+        </div>
+
+        <div class="voices-grid" id="voices-grid">
+            <div class="empty-state">
+                <i class="fas fa-microphone-alt"></i>
+                <div class="loading"></div>
+                <p>Carregando vozes...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allVoices = [];
+        let filteredVoices = [];
+        let selectedVoices = new Set();
+
+        // Carregar todas as vozes
+        async function loadAllVoices() {
+            try {
+                const response = await fetch('/api/v2/voices/all');
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Combinar vozes com sistema identificado
+                    allVoices = [
+                        ...data.voices.gemini.map(v => ({ ...v, system: 'gemini' })),
+                        ...data.voices.googleCloud.map(v => ({ ...v, system: 'google-cloud' }))
+                    ];
+                    
+                    filteredVoices = [...allVoices];
+                    populateFilters();
+                    displayVoices();
+                    updateStats();
+                } else {
+                    showError('Erro ao carregar vozes');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                showError('Erro de conexão com o servidor');
+            }
+        }
+
+        // Popular filtros
+        function populateFilters() {
+            // Categorias
+            const categories = [...new Set(allVoices.map(v => v.category || v.type).filter(Boolean))];
+            const categoryFilter = document.getElementById('category-filter');
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                categoryFilter.appendChild(option);
+            });
+
+            // Estilos
+            const styles = [...new Set(allVoices.map(v => v.style).filter(Boolean))];
+            const styleFilter = document.getElementById('style-filter');
+            styles.forEach(style => {
+                const option = document.createElement('option');
+                option.value = style;
+                option.textContent = style;
+                styleFilter.appendChild(option);
+            });
+        }
+
+        // Exibir vozes
+        function displayVoices() {
+            const grid = document.getElementById('voices-grid');
+            
+            if (filteredVoices.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-search"></i>
+                        <p>Nenhuma voz encontrada com os filtros aplicados</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = '';
+            
+            filteredVoices.forEach(voice => {
+                const card = document.createElement('div');
+                card.className = `voice-card ${voice.system} ${selectedVoices.has(voice.name) ? 'selected' : ''}`;
+                card.onclick = () => toggleVoiceSelection(voice.name);
+                
+                const details = voice.system === 'gemini' 
+                    ? `Estilo: ${voice.style} • Categoria: ${voice.category}`
+                    : `Tipo: ${voice.type} • Gênero: ${voice.ssmlGender}`;
+
+                const tags = voice.system === 'gemini'
+                    ? [voice.style, voice.category]
+                    : [voice.type, voice.ssmlGender];
+
+                card.innerHTML = `
+                    <div class="voice-header">
+                        <div>
+                            <div class="voice-name">${voice.name}</div>
+                        </div>
+                        <div class="voice-system ${voice.system}">
+                            ${voice.system === 'gemini' ? 'Gemini' : 'Google Cloud'}
+                        </div>
+                    </div>
+                    <div class="voice-details">${details}</div>
+                    <div class="voice-tags">
+                        ${tags.filter(Boolean).map(tag => `<span class="voice-tag">${tag}</span>`).join('')}
+                    </div>
+                    <div class="voice-actions">
+                        <button class="voice-action" onclick="event.stopPropagation(); testVoice('${voice.name}')" title="Testar voz">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        <button class="voice-action" onclick="event.stopPropagation(); addToFavorites('${voice.name}')" title="Adicionar aos favoritos">
+                            <i class="fas fa-star"></i>
+                        </button>
+                        <button class="voice-action" onclick="event.stopPropagation(); copyVoiceName('${voice.name}')" title="Copiar nome">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+
+            updateStats();
+        }
+
+        // Filtrar vozes
+        function filterVoices() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const systemFilter = document.getElementById('system-filter').value;
+            const categoryFilter = document.getElementById('category-filter').value;
+            const styleFilter = document.getElementById('style-filter').value;
+            const genderFilter = document.getElementById('gender-filter').value;
+
+            filteredVoices = allVoices.filter(voice => {
+                const matchesSearch = !searchTerm || 
+                    voice.name.toLowerCase().includes(searchTerm) ||
+                    (voice.style && voice.style.toLowerCase().includes(searchTerm)) ||
+                    (voice.category && voice.category.toLowerCase().includes(searchTerm));
+
+                const matchesSystem = !systemFilter || voice.system === systemFilter;
+                const matchesCategory = !categoryFilter || voice.category === categoryFilter || voice.type === categoryFilter;
+                const matchesStyle = !styleFilter || voice.style === styleFilter;
+                const matchesGender = !genderFilter || voice.ssmlGender === genderFilter;
+
+                return matchesSearch && matchesSystem && matchesCategory && matchesStyle && matchesGender;
+            });
+
+            displayVoices();
+        }
+
+        // Toggle seleção de voz
+        function toggleVoiceSelection(voiceName) {
+            if (selectedVoices.has(voiceName)) {
+                selectedVoices.delete(voiceName);
+            } else {
+                selectedVoices.add(voiceName);
+            }
+            displayVoices();
+        }
+
+        // Carregar vozes aleatórias
+        async function loadRandomVoices() {
+            try {
+                const response = await fetch('/api/voices/random?count=10');
+                const data = await response.json();
+                
+                if (data.success) {
+                    filteredVoices = data.voices;
+                    displayVoices();
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                showError('Erro ao carregar vozes aleatórias');
+            }
+        }
+
+        // Carregar favoritas
+        async function loadFavorites() {
+            try {
+                const response = await fetch('/api/voices/favorites');
+                const data = await response.json();
+                
+                if (data.success) {
+                    filteredVoices = data.favorites.all;
+                    displayVoices();
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                showError('Erro ao carregar favoritas');
+            }
+        }
+
+        // Limpar filtros
+        function clearFilters() {
+            document.getElementById('search-input').value = '';
+            document.getElementById('system-filter').value = '';
+            document.getElementById('category-filter').value = '';
+            document.getElementById('style-filter').value = '';
+            document.getElementById('gender-filter').value = '';
+            
+            filteredVoices = [...allVoices];
+            displayVoices();
+        }
+
+        // Limpar seleção
+        function clearSelection() {
+            selectedVoices.clear();
+            displayVoices();
+        }
+
+        // Testar voz
+        function testVoice(voiceName) {
+            console.log('Testando voz:', voiceName);
+            // Implementar teste de voz
+        }
+
+        // Adicionar aos favoritos
+        function addToFavorites(voiceName) {
+            console.log('Adicionando aos favoritos:', voiceName);
+            // Implementar favoritos
+        }
+
+        // Copiar nome da voz
+        function copyVoiceName(voiceName) {
+            navigator.clipboard.writeText(voiceName).then(() => {
+                console.log('Nome copiado:', voiceName);
+            });
+        }
+
+        // Atualizar estatísticas
+        function updateStats() {
+            document.getElementById('total-voices').textContent = allVoices.length;
+            document.getElementById('filtered-voices').textContent = filteredVoices.length;
+            document.getElementById('selected-voices').textContent = selectedVoices.size;
+            
+            const geminiCount = allVoices.filter(v => v.system === 'gemini').length;
+            const googleCount = allVoices.filter(v => v.system === 'google-cloud').length;
+            
+            document.getElementById('gemini-count').textContent = geminiCount;
+            document.getElementById('google-count').textContent = googleCount;
+        }
+
+        // Mostrar erro
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
+            
+            const container = document.querySelector('.container');
+            container.insertBefore(errorDiv, container.firstChild);
+            
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 5000);
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAllVoices();
+        });
+    </script>
+</body>
+</html>

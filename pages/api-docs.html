@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Documentation & Testing - TTS Studio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #E9F1FA 0%, #FFFFFF 100%);
+            min-height: 100vh;
+            color: #202124;
+        }
+
+        .navbar {
+            background: #FFFFFF;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(0, 171, 228, 0.2);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 6px rgba(0, 171, 228, 0.1);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: #202124;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #202124;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: rgba(0, 171, 228, 0.1);
+            color: #00ABE4;
+            transform: translateY(-2px);
+        }
+
+        .classic-tts-link {
+            background: #00ABE4;
+            color: #FFFFFF;
+            font-weight: 600;
+        }
+
+        .classic-tts-link:hover {
+            background: #0099CC;
+            color: #FFFFFF;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            color: #202124;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            color: #5F6368;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .api-section {
+            background: #FFFFFF;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 2px solid rgba(0, 171, 228, 0.2);
+            box-shadow: 0 4px 6px rgba(0, 171, 228, 0.1);
+        }
+
+        .section-title {
+            color: #202124;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .auth-info {
+            background: rgba(0, 171, 228, 0.1);
+            border: 1px solid rgba(0, 171, 228, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .auth-title {
+            color: #00ABE4;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            color: #202124;
+        }
+
+        .endpoint-card {
+            background: #FFFFFF;
+            border: 2px solid rgba(0, 171, 228, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .endpoint-card:hover {
+            border-color: #00ABE4;
+            box-shadow: 0 4px 12px rgba(0, 171, 228, 0.2);
+        }
+
+        .endpoint-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .method-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .method-get { background: #e8f5e8; color: #2e7d32; }
+        .method-post { background: #fff3e0; color: #f57c00; }
+        .method-put { background: #e3f2fd; color: #1976d2; }
+        .method-delete { background: #ffebee; color: #d32f2f; }
+
+        .endpoint-path {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            color: #202124;
+            font-weight: 600;
+        }
+
+        .endpoint-description {
+            color: #5F6368;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .test-section {
+            border-top: 1px solid rgba(0, 171, 228, 0.2);
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+
+        .test-form {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-label {
+            color: #202124;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .form-input, .form-textarea, .form-select {
+            background: #FFFFFF;
+            border: 2px solid rgba(0, 171, 228, 0.2);
+            border-radius: 8px;
+            padding: 0.8rem;
+            font-size: 1rem;
+            color: #202124;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: #00ABE4;
+            box-shadow: 0 0 0 3px rgba(0, 171, 228, 0.2);
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: 'Courier New', monospace;
+        }
+
+        .test-button {
+            background: #00ABE4;
+            color: #FFFFFF;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .test-button:hover {
+            background: #0099CC;
+            transform: translateY(-2px);
+        }
+
+        .test-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .response-section {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        .response-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .status-success { color: #2e7d32; }
+        .status-error { color: #d32f2f; }
+
+        .response-body {
+            background: #ffffff;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .loading {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 171, 228, 0.3);
+            border-radius: 50%;
+            border-top-color: #00ABE4;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid rgba(0, 171, 228, 0.2);
+            margin-bottom: 2rem;
+        }
+
+        .tab {
+            padding: 1rem 2rem;
+            background: none;
+            border: none;
+            color: #5F6368;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab.active {
+            color: #00ABE4;
+            border-bottom-color: #00ABE4;
+        }
+
+        .tab:hover {
+            color: #00ABE4;
+            background: rgba(0, 171, 228, 0.1);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .curl-example {
+            background: #2d3748;
+            color: #e2e8f0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .copy-button {
+            background: rgba(0, 171, 228, 0.1);
+            color: #00ABE4;
+            border: 1px solid rgba(0, 171, 228, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            margin-top: 0.5rem;
+        }
+
+        .copy-button:hover {
+            background: rgba(0, 171, 228, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-code"></i>
+                <span>API Documentation</span>
+            </div>
+            <div class="nav-links">
+                <a href="/pages/dashboard.html" class="nav-link">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/pages/gemini-studio.html" class="nav-link">
+                    <i class="fas fa-magic"></i>
+                    <span>Gemini Studio</span>
+                </a>
+                <a href="/pages/multi-speaker.html" class="nav-link">
+                    <i class="fas fa-users"></i>
+                    <span>Multi-Speaker</span>
+                </a>
+                <a href="/pages/voice-lab.html" class="nav-link">
+                    <i class="fas fa-flask"></i>
+                    <span>Voice Lab</span>
+                </a>
+                <a href="/client.html" class="nav-link classic-tts-link">
+                    <i class="fas fa-microphone-alt"></i>
+                    <span>TTS Clássico</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-code"></i>
+                API Documentation & Testing
+            </h1>
+            <p class="page-subtitle">
+                Documentação completa da API TTS Studio com testes interativos e exemplos de uso
+            </p>
+        </div>
+
+        <!-- Autenticação -->
+        <div class="api-section">
+            <h2 class="section-title">
+                <i class="fas fa-shield-alt"></i>
+                Autenticação
+            </h2>
+            
+            <div class="auth-info">
+                <h3 class="auth-title">
+                    <i class="fas fa-key"></i>
+                    Como Autenticar
+                </h3>
+                <p style="color: #5F6368; margin-bottom: 1rem;">
+                    A API suporta <strong>dois métodos de autenticação</strong>: sessão web (para interface) e API Key (para uso programático).
+                </p>
+
+                <h4 style="color: #202124; margin: 1rem 0 0.5rem 0;">🌐 Método 1: Via Interface Web (Sessão)</h4>
+                <p style="color: #5F6368; margin-bottom: 1rem;">
+                    Faça login através da interface web em <code>/login.html</code>. Os cookies de sessão serão automaticamente incluídos nas requisições.
+                </p>
+
+                <h4 style="color: #202124; margin: 1rem 0 0.5rem 0;">🔑 Método 2: Via API Key (Recomendado para Integrações)</h4>
+                <p style="color: #5F6368; margin-bottom: 1rem;">
+                    Use uma API Key no header da requisição. <strong>Ideal para n8n, Zapier, scripts, etc.</strong>
+                </p>
+
+                <h5 style="color: #00ABE4; margin: 1rem 0 0.5rem 0;">Opção A: Header X-API-Key</h5>
+                <div class="code-block">curl -X POST http://localhost:3003/api/v2/generate-single \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: tts_sk_1234567890abcdef_your_secure_api_key_here" \
+  -d '{"text":"Olá mundo!","voiceName":"Alloy"}'</div>
+
+                <h5 style="color: #00ABE4; margin: 1rem 0 0.5rem 0;">Opção B: Header Authorization</h5>
+                <div class="code-block">curl -X POST http://localhost:3003/api/v2/generate-single \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer tts_sk_1234567890abcdef_your_secure_api_key_here" \
+  -d '{"text":"Olá mundo!","voiceName":"Alloy"}'</div>
+
+                <h4 style="color: #202124; margin: 1rem 0 0.5rem 0;">🍪 Método 3: Via cURL com Cookies (Legacy)</h4>
+                <p style="color: #5F6368; margin-bottom: 1rem;">
+                    1. Primeiro, faça login e salve os cookies:
+                </p>
+                <div class="code-block">curl -c cookies.txt -X POST http://localhost:3003/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"seu_usuario","password":"sua_senha"}'</div>
+
+                <p style="color: #5F6368; margin-bottom: 1rem;">
+                    2. Use os cookies nas requisições subsequentes:
+                </p>
+                <div class="code-block">curl -b cookies.txt http://localhost:3003/api/v2/generate-single \
+  -H "Content-Type: application/json" \
+  -d '{"text":"Olá mundo!","voiceName":"Alloy"}'</div>
+
+                <div style="background: rgba(255, 193, 7, 0.1); border: 1px solid rgba(255, 193, 7, 0.3); border-radius: 8px; padding: 1rem; margin: 1rem 0;">
+                    <h5 style="color: #ff8f00; margin: 0 0 0.5rem 0;">
+                        <i class="fas fa-lightbulb"></i> Dica para Integrações
+                    </h5>
+                    <p style="color: #5F6368; margin: 0 0 0.5rem 0; font-size: 0.9rem;">
+                        Para usar em <strong>n8n, Zapier, scripts Python/Node.js</strong>, etc., use o <strong>Método 2 (API Key)</strong>.
+                        É mais simples e não requer gerenciamento de cookies/sessões.
+                    </p>
+                </div>
+
+                <div style="background: rgba(0, 171, 228, 0.1); border: 1px solid rgba(0, 171, 228, 0.3); border-radius: 8px; padding: 1rem; margin: 1rem 0;">
+                    <h5 style="color: #00ABE4; margin: 0 0 0.5rem 0;">
+                        <i class="fas fa-key"></i> Sua API Key
+                    </h5>
+                    <p style="color: #5F6368; margin: 0 0 0.5rem 0; font-size: 0.9rem;">
+                        Sua API Key está no arquivo <code>.env</code> na variável <code>TTS_API_KEY</code>:
+                    </p>
+                    <div class="code-block" style="margin: 0.5rem 0;">tts_sk_a7b9c2d4e6f8g1h3j5k7m9n0p2q4r6s8t0u2v4w6x8y0z1a3b5c7d9e1f3g5h7i9</div>
+                    <p style="color: #5F6368; margin: 0; font-size: 0.8rem;">
+                        <i class="fas fa-info-circle"></i> Use esta chave nos testes interativos e integrações.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('endpoints')">
+                <i class="fas fa-list"></i> Endpoints
+            </button>
+            <button class="tab" onclick="showTab('testing')">
+                <i class="fas fa-play"></i> Testes Interativos
+            </button>
+            <button class="tab" onclick="showTab('examples')">
+                <i class="fas fa-code"></i> Exemplos cURL
+            </button>
+        </div>
+
+        <!-- Tab Content: Endpoints -->
+        <div id="endpoints" class="tab-content active">
+            <!-- Endpoints serão carregados aqui via JavaScript -->
+        </div>
+
+        <!-- Tab Content: Testing -->
+        <div id="testing" class="tab-content">
+            <!-- Testes interativos serão carregados aqui via JavaScript -->
+        </div>
+
+        <!-- Tab Content: Examples -->
+        <div id="examples" class="tab-content">
+            <!-- Exemplos cURL serão carregados aqui via JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // Dados dos endpoints
+        const endpoints = [
+            {
+                method: 'GET',
+                path: '/api/v2/status',
+                description: 'Verifica o status dos sistemas TTS (Gemini e Google Cloud)',
+                auth: false,
+                parameters: [],
+                example: {
+                    response: {
+                        success: true,
+                        systems: {
+                            gemini: { available: true, model: "gemini-2.5-flash" },
+                            googleCloud: { available: true, voices: 150 }
+                        },
+                        statistics: {
+                            totalVoices: 200,
+                            totalAudios: 150
+                        }
+                    }
+                }
+            },
+            {
+                method: 'GET',
+                path: '/api/v2/voices/all',
+                description: 'Lista todas as vozes disponíveis (Gemini + Google Cloud)',
+                auth: false,
+                parameters: [],
+                example: {
+                    response: {
+                        success: true,
+                        summary: { total: 200, gemini: 50, googleCloud: 150 },
+                        voices: { gemini: [], googleCloud: [] }
+                    }
+                }
+            },
+            {
+                method: 'GET',
+                path: '/api/v2/voices/gemini',
+                description: 'Lista apenas as vozes do Gemini 2.5 TTS',
+                auth: false,
+                parameters: [],
+                example: {
+                    response: {
+                        success: true,
+                        count: 50,
+                        voices: [
+                            {
+                                name: "Alloy",
+                                gender: "neutral",
+                                language: "pt-BR",
+                                styles: ["default", "excited", "sad"]
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                method: 'GET',
+                path: '/api/v2/voices/google',
+                description: 'Lista apenas as vozes do Google Cloud TTS',
+                auth: false,
+                parameters: [],
+                example: {
+                    response: {
+                        success: true,
+                        count: 150,
+                        voices: [
+                            {
+                                name: "pt-BR-Wavenet-A",
+                                gender: "FEMALE",
+                                language: "pt-BR",
+                                type: "Wavenet"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                method: 'POST',
+                path: '/api/v2/generate-single',
+                description: 'Gera áudio usando uma única voz (Gemini TTS)',
+                auth: true,
+                parameters: [
+                    { name: 'text', type: 'string', required: true, description: 'Texto para converter em áudio' },
+                    { name: 'voiceName', type: 'string', required: true, description: 'Nome da voz a ser usada' },
+                    { name: 'style', type: 'string', required: false, description: 'Estilo da voz (opcional)' }
+                ],
+                example: {
+                    request: {
+                        text: "Olá, este é um teste do Gemini TTS!",
+                        voiceName: "Alloy",
+                        style: "excited"
+                    },
+                    response: {
+                        success: true,
+                        audio: {
+                            url: "/uploads/audio_123456.mp3",
+                            fileName: "audio_123456.mp3",
+                            duration: 3.5
+                        }
+                    }
+                }
+            },
+            {
+                method: 'POST',
+                path: '/api/v2/generate-multi',
+                description: 'Gera áudio com múltiplos speakers (diálogo)',
+                auth: true,
+                parameters: [
+                    { name: 'dialogue', type: 'string', required: true, description: 'Diálogo formatado com speakers' },
+                    { name: 'speakers', type: 'array', required: true, description: 'Array com configuração dos speakers' }
+                ],
+                example: {
+                    request: {
+                        dialogue: "João: Olá Maria!\nMaria: Oi João, como você está?",
+                        speakers: [
+                            { name: "João", voice: "Alloy" },
+                            { name: "Maria", voice: "Echo" }
+                        ]
+                    },
+                    response: {
+                        success: true,
+                        audio: {
+                            url: "/uploads/dialogue_123456.mp3",
+                            fileName: "dialogue_123456.mp3",
+                            duration: 8.2
+                        }
+                    }
+                }
+            },
+            {
+                method: 'GET',
+                path: '/api/v2/audios',
+                description: 'Lista todos os áudios gerados pelo usuário',
+                auth: true,
+                parameters: [],
+                example: {
+                    response: {
+                        success: true,
+                        summary: { total: 25 },
+                        audios: [
+                            {
+                                id: "123456",
+                                fileName: "audio_123456.mp3",
+                                url: "/uploads/audio_123456.mp3",
+                                createdAt: "2024-01-15T10:30:00Z",
+                                duration: 3.5
+                            }
+                        ]
+                    }
+                }
+            }
+        ];
+
+        // Função para mostrar tabs
+        function showTab(tabName) {
+            // Esconder todas as tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Mostrar tab selecionada
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            // Carregar conteúdo específico
+            if (tabName === 'endpoints') {
+                loadEndpoints();
+            } else if (tabName === 'testing') {
+                loadTesting();
+            } else if (tabName === 'examples') {
+                loadExamples();
+            }
+        }
+
+        // Carregar endpoints
+        function loadEndpoints() {
+            const container = document.getElementById('endpoints');
+            container.innerHTML = endpoints.map((endpoint, index) => `
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method-badge method-${endpoint.method.toLowerCase()}">${endpoint.method}</span>
+                        <span class="endpoint-path">${endpoint.path}</span>
+                        ${endpoint.auth ? '<i class="fas fa-lock" style="color: #f57c00;" title="Requer autenticação"></i>' : '<i class="fas fa-unlock" style="color: #2e7d32;" title="Público"></i>'}
+                    </div>
+                    <div class="endpoint-description">${endpoint.description}</div>
+
+                    ${endpoint.parameters.length > 0 ? `
+                        <h4 style="color: #202124; margin: 1rem 0 0.5rem 0;">Parâmetros:</h4>
+                        <ul style="color: #5F6368; margin-left: 1.5rem;">
+                            ${endpoint.parameters.map(param => `
+                                <li><strong>${param.name}</strong> (${param.type}) ${param.required ? '<span style="color: #d32f2f;">*</span>' : ''} - ${param.description}</li>
+                            `).join('')}
+                        </ul>
+                    ` : ''}
+
+                    ${endpoint.example.request ? `
+                        <h4 style="color: #202124; margin: 1rem 0 0.5rem 0;">Exemplo de Requisição:</h4>
+                        <div class="code-block">${JSON.stringify(endpoint.example.request, null, 2)}</div>
+                    ` : ''}
+
+                    <h4 style="color: #202124; margin: 1rem 0 0.5rem 0;">Exemplo de Resposta:</h4>
+                    <div class="code-block">${JSON.stringify(endpoint.example.response, null, 2)}</div>
+                </div>
+            `).join('');
+        }
+
+        // Carregar testes
+        function loadTesting() {
+            const container = document.getElementById('testing');
+            container.innerHTML = endpoints.map((endpoint, index) => `
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method-badge method-${endpoint.method.toLowerCase()}">${endpoint.method}</span>
+                        <span class="endpoint-path">${endpoint.path}</span>
+                        ${endpoint.auth ? '<i class="fas fa-lock" style="color: #f57c00;" title="Requer autenticação"></i>' : '<i class="fas fa-unlock" style="color: #2e7d32;" title="Público"></i>'}
+                    </div>
+                    <div class="endpoint-description">${endpoint.description}</div>
+
+                    <div class="test-section">
+                        <h4 style="color: #202124; margin-bottom: 1rem;">🧪 Teste Interativo</h4>
+                        <form class="test-form" onsubmit="testEndpoint(event, ${index})">
+                            ${endpoint.auth ? `
+                                <div class="form-group">
+                                    <label class="form-label">🔑 API Key <span style="color: #d32f2f;">*</span></label>
+                                    <input type="text" class="form-input" name="apiKey" required placeholder="tts_sk_1234567890abcdef_your_secure_api_key_here" style="font-family: monospace;">
+                                    <small style="color: #5F6368; font-size: 0.8rem;">Encontre sua API Key no arquivo .env (TTS_API_KEY)</small>
+                                </div>
+                            ` : ''}
+
+                            ${endpoint.parameters.map(param => `
+                                <div class="form-group">
+                                    <label class="form-label">${param.name} ${param.required ? '<span style="color: #d32f2f;">*</span>' : ''}</label>
+                                    ${param.type === 'string' && param.name !== 'dialogue' ?
+                                        `<input type="text" class="form-input" name="${param.name}" ${param.required ? 'required' : ''} placeholder="${param.description}">` :
+                                        param.name === 'dialogue' ?
+                                        `<textarea class="form-textarea" name="${param.name}" ${param.required ? 'required' : ''} placeholder="João: Olá Maria!&#10;Maria: Oi João, como você está?"></textarea>` :
+                                        param.type === 'array' ?
+                                        `<textarea class="form-textarea" name="${param.name}" ${param.required ? 'required' : ''} placeholder='[{"name":"João","voice":"Alloy"},{"name":"Maria","voice":"Echo"}]'></textarea>` :
+                                        `<input type="text" class="form-input" name="${param.name}" ${param.required ? 'required' : ''} placeholder="${param.description}">`
+                                    }
+                                </div>
+                            `).join('')}
+
+                            <button type="submit" class="test-button">
+                                <i class="fas fa-play"></i>
+                                Testar Endpoint
+                            </button>
+                        </form>
+
+                        <div id="response-${index}" class="response-section" style="display: none;">
+                            <div class="response-header">
+                                <span id="status-${index}"></span>
+                                <span>Resposta:</span>
+                            </div>
+                            <div id="body-${index}" class="response-body"></div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Função para testar endpoint
+        async function testEndpoint(event, endpointIndex) {
+            event.preventDefault();
+
+            const endpoint = endpoints[endpointIndex];
+            const form = event.target;
+            const formData = new FormData(form);
+            const button = form.querySelector('.test-button');
+            const responseDiv = document.getElementById(`response-${endpointIndex}`);
+            const statusSpan = document.getElementById(`status-${endpointIndex}`);
+            const bodyDiv = document.getElementById(`body-${endpointIndex}`);
+
+            // Mostrar loading
+            button.disabled = true;
+            button.innerHTML = '<div class="loading"></div> Testando...';
+            responseDiv.style.display = 'block';
+            statusSpan.innerHTML = '<div class="loading"></div> Enviando requisição...';
+            bodyDiv.textContent = '';
+
+            try {
+                let requestOptions = {
+                    method: endpoint.method,
+                    credentials: 'include',
+                    headers: {}
+                };
+
+                // Adicionar API Key se o endpoint requer autenticação
+                if (endpoint.auth) {
+                    const apiKey = formData.get('apiKey');
+                    if (apiKey) {
+                        requestOptions.headers['X-API-Key'] = apiKey;
+                    }
+                }
+
+                if (endpoint.method === 'POST') {
+                    const requestBody = {};
+
+                    // Processar parâmetros (excluir apiKey dos parâmetros do body)
+                    endpoint.parameters.forEach(param => {
+                        const value = formData.get(param.name);
+                        if (value) {
+                            if (param.type === 'array') {
+                                try {
+                                    requestBody[param.name] = JSON.parse(value);
+                                } catch (e) {
+                                    throw new Error(`Erro no formato JSON do parâmetro ${param.name}`);
+                                }
+                            } else {
+                                requestBody[param.name] = value;
+                            }
+                        }
+                    });
+
+                    requestOptions.headers['Content-Type'] = 'application/json';
+                    requestOptions.body = JSON.stringify(requestBody);
+                } else if (endpoint.method === 'GET' && endpoint.auth) {
+                    // Para endpoints GET que precisam de auth, verificar se tem API Key
+                    const apiKey = formData.get('apiKey');
+                    if (!apiKey) {
+                        throw new Error('API Key é obrigatória para este endpoint');
+                    }
+                }
+
+                const response = await fetch(endpoint.path, requestOptions);
+                const data = await response.json();
+
+                // Mostrar resposta
+                statusSpan.className = response.ok ? 'status-success' : 'status-error';
+                statusSpan.innerHTML = `<i class="fas fa-${response.ok ? 'check' : 'times'}"></i> ${response.status} ${response.statusText}`;
+                bodyDiv.textContent = JSON.stringify(data, null, 2);
+
+            } catch (error) {
+                statusSpan.className = 'status-error';
+                statusSpan.innerHTML = '<i class="fas fa-times"></i> Erro';
+                bodyDiv.textContent = `Erro: ${error.message}`;
+            } finally {
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-play"></i> Testar Endpoint';
+            }
+        }
+
+        // Carregar exemplos
+        function loadExamples() {
+            const container = document.getElementById('examples');
+            container.innerHTML = endpoints.map(endpoint => `
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method-badge method-${endpoint.method.toLowerCase()}">${endpoint.method}</span>
+                        <span class="endpoint-path">${endpoint.path}</span>
+                    </div>
+                    <div class="endpoint-description">${endpoint.description}</div>
+
+                    <h4 style="color: #202124; margin: 1rem 0 0.5rem 0;">📋 Exemplo cURL:</h4>
+                    <div class="curl-example">${generateCurlExample(endpoint)}</div>
+                    <button class="copy-button" onclick="copyToClipboard('${endpoint.path}')">
+                        <i class="fas fa-copy"></i> Copiar
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Gerar exemplo cURL
+        function generateCurlExample(endpoint) {
+            let curl = `curl -X ${endpoint.method}`;
+
+            if (endpoint.auth) {
+                // Priorizar API Key sobre cookies
+                curl += ` \\
+  -H "X-API-Key: tts_sk_a7b9c2d4e6f8g1h3j5k7m9n0p2q4r6s8t0u2v4w6x8y0z1a3b5c7d9e1f3g5h7i9"`;
+            }
+
+            curl += ` \\
+  http://localhost:3003${endpoint.path}`;
+
+            if (endpoint.method === 'POST') {
+                curl += ` \\
+  -H "Content-Type: application/json"`;
+
+                if (endpoint.example.request) {
+                    curl += ` \\
+  -d '${JSON.stringify(endpoint.example.request)}'`;
+                }
+            }
+
+            return curl;
+        }
+
+        // Copiar para clipboard
+        function copyToClipboard(endpointPath) {
+            const endpoint = endpoints.find(e => e.path === endpointPath);
+            const curlCommand = generateCurlExample(endpoint);
+
+            navigator.clipboard.writeText(curlCommand).then(() => {
+                // Mostrar feedback visual
+                event.target.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+                setTimeout(() => {
+                    event.target.innerHTML = '<i class="fas fa-copy"></i> Copiar';
+                }, 2000);
+            });
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            loadEndpoints();
+        });
+    </script>
+</body>
+</html>

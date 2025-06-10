@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini Studio - TTS Avançado</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #E9F1FA;
+            min-height: 100vh;
+            color: #202124;
+        }
+
+        .header {
+            background: #FFFFFF;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid rgba(0, 171, 228, 0.2);
+            box-shadow: 0 2px 10px rgba(0, 171, 228, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: #202124;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .logo i {
+            font-size: 2rem;
+            color: #00ABE4;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-link {
+            color: #202124;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: rgba(0, 171, 228, 0.1);
+            color: #00ABE4;
+            transform: translateY(-2px);
+        }
+
+        .classic-tts-link {
+            background: #00ABE4;
+            color: #FFFFFF;
+            font-weight: 600;
+        }
+
+        .classic-tts-link:hover {
+            background: #0099CC;
+            color: #FFFFFF;
+        }
+
+        .audio-player h3 {
+            color: #202124;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .voice-grid-loading {
+            color: #5F6368;
+            text-align: center;
+            grid-column: 1 / -1;
+        }
+
+        .tips-section {
+            margin-top: 2rem;
+        }
+
+        .tips-title {
+            color: #202124;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .tips-content {
+            color: #5F6368;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .audio-element {
+            flex: 1;
+            margin: 0 1rem;
+        }
+
+        .audio-player-title {
+            color: #202124;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+        }
+
+        .main-content {
+            background: #FFFFFF;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 2px solid rgba(0, 171, 228, 0.2);
+            box-shadow: 0 4px 6px rgba(0, 171, 228, 0.1);
+        }
+
+        .sidebar {
+            background: #FFFFFF;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 2px solid rgba(0, 171, 228, 0.2);
+            height: fit-content;
+            box-shadow: 0 4px 6px rgba(0, 171, 228, 0.1);
+        }
+
+        .section-title {
+            color: #202124;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .text-editor {
+            background: #FFFFFF;
+            border: 2px solid rgba(0, 171, 228, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            width: 100%;
+            min-height: 200px;
+            font-size: 1rem;
+            line-height: 1.6;
+            resize: vertical;
+            margin-bottom: 1.5rem;
+            font-family: inherit;
+            color: #202124;
+            transition: all 0.3s ease;
+        }
+
+        .text-editor:focus {
+            outline: none;
+            border-color: #00ABE4;
+            box-shadow: 0 0 0 3px rgba(0, 171, 228, 0.2);
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .control-label {
+            color: #202124;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .select-input {
+            background: #FFFFFF;
+            border: 2px solid rgba(0, 171, 228, 0.2);
+            border-radius: 8px;
+            padding: 0.8rem;
+            font-size: 1rem;
+            cursor: pointer;
+            color: #202124;
+            transition: all 0.3s ease;
+            width: 100%;
+            font-family: inherit;
+        }
+
+        .select-input:focus {
+            outline: none;
+            border-color: #00ABE4;
+            box-shadow: 0 0 0 3px rgba(0, 171, 228, 0.2);
+        }
+
+        .style-input {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 8px;
+            padding: 0.8rem;
+            font-size: 1rem;
+            width: 100%;
+            border: 2px solid rgba(0, 171, 228, 0.2);
+        }
+
+        .style-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+        }
+
+        .generate-button {
+            background: #00ABE4;
+            color: #FFFFFF;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 20px;
+        }
+
+        .generate-button:hover:not(:disabled) {
+            background: #0099CC;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 171, 228, 0.3);
+        }
+
+        .generate-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .voice-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .voice-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid transparent;
+            border-radius: 8px;
+            padding: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            border: 2px solid rgba(0, 171, 228, 0.2);
+        }
+
+        .voice-card:hover {
+            background: rgba(0, 171, 228, 0.1);
+            border-color: #00ABE4;
+        }
+
+        .voice-card.selected {
+            background: rgba(102, 126, 234, 0.3);
+            border-color: rgba(102, 126, 234, 0.6);
+        }
+
+        .voice-name {
+            color: #202124;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .voice-style {
+            color: #5F6368;
+            font-size: 0.8rem;
+        }
+
+        .audio-player {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            display: none;
+        }
+
+        .audio-player.show {
+            display: block;
+        }
+
+        .audio-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .play-button {
+            background: linear-gradient(45deg, #4ade80, #22c55e);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .play-button:hover {
+            transform: scale(1.1);
+        }
+
+        .download-button {
+            background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .download-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: rgba(248, 113, 113, 0.2);
+            border: 1px solid rgba(248, 113, 113, 0.5);
+            color: #fecaca;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .success-message {
+            background: rgba(74, 222, 128, 0.2);
+            border: 1px solid rgba(74, 222, 128, 0.5);
+            color: #bbf7d0;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .style-suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .style-tag {
+            background: rgba(0, 171, 228, 0.1);
+            color: #00ABE4;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 171, 228, 0.3);
+            font-weight: 500;
+        }
+
+        .style-tag:hover {
+            background: rgba(0, 171, 228, 0.2);
+            border-color: #00ABE4;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .voice-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-magic"></i>
+                <span>Gemini Studio</span>
+            </div>
+            <nav class="nav-links">
+                <a href="/pages/dashboard.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/pages/multi-speaker.html" class="nav-link">
+                    <i class="fas fa-users"></i>
+                    <span>Multi-Speaker</span>
+                </a>
+                <a href="/pages/voice-lab.html" class="nav-link">
+                    <i class="fas fa-flask"></i>
+                    <span>Voice Lab</span>
+                </a>
+                <a href="/pages/api-docs.html" class="nav-link">
+                    <i class="fas fa-code"></i>
+                    <span>API Docs</span>
+                </a>
+                <a href="/client.html" class="nav-link classic-tts-link">
+                    <i class="fas fa-microphone-alt"></i>
+                    <span>TTS Clássico</span>
+                </a>
+                <a href="/auth/logout" class="nav-link">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Sair</span>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <main class="main-content">
+            <h2 class="section-title">
+                <i class="fas fa-edit"></i>
+                Editor de Texto
+            </h2>
+            
+            <textarea 
+                class="text-editor" 
+                id="text-input" 
+                placeholder="Digite seu texto aqui... Você pode usar instruções como 'Say cheerfully:', 'Say professionally:', 'Say calmly:', etc."
+            >Olá! Este é o Gemini Studio, onde você pode criar áudios incríveis com controle total de estilo e emoção.</textarea>
+
+            <div class="controls-grid">
+                <div class="control-group">
+                    <label class="control-label">Voz Selecionada</label>
+                    <select class="select-input" id="voice-select">
+                        <option value="">Carregando vozes...</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Estilo (Opcional)</label>
+                    <input 
+                        type="text" 
+                        class="style-input" 
+                        id="style-input" 
+                        placeholder="ex: cheerfully, professionally, calmly"
+                    >
+                </div>
+            </div>
+
+            <div class="style-suggestions">
+                <span class="style-tag" onclick="setStyle('cheerfully')">Alegremente</span>
+                <span class="style-tag" onclick="setStyle('professionally')">Profissionalmente</span>
+                <span class="style-tag" onclick="setStyle('calmly')">Calmamente</span>
+                <span class="style-tag" onclick="setStyle('enthusiastically')">Entusiasticamente</span>
+                <span class="style-tag" onclick="setStyle('warmly')">Calorosamente</span>
+                <span class="style-tag" onclick="setStyle('confidently')">Confiantemente</span>
+            </div>
+
+            <button class="generate-button" id="generate-btn" onclick="generateAudio()">
+                <i class="fas fa-magic"></i>
+                Gerar Áudio com Gemini
+            </button>
+
+            <div class="audio-player" id="audio-player">
+                <h3 class="audio-player-title">
+                    <i class="fas fa-volume-up"></i>
+                    Áudio Gerado
+                </h3>
+                <div class="audio-controls">
+                    <button class="play-button" id="play-btn" onclick="togglePlay()">
+                        <i class="fas fa-play" id="play-icon"></i>
+                    </button>
+                    <audio id="audio-element" class="audio-element"></audio>
+                    <a class="download-button" id="download-btn" download>
+                        <i class="fas fa-download"></i>
+                        Download
+                    </a>
+                </div>
+            </div>
+        </main>
+
+        <aside class="sidebar">
+            <h3 class="section-title">
+                <i class="fas fa-microphone-alt"></i>
+                Vozes Gemini
+            </h3>
+            
+            <div class="voice-grid" id="voice-grid">
+                <div class="voice-grid-loading">
+                    <div class="loading"></div>
+                    <p>Carregando vozes...</p>
+                </div>
+            </div>
+
+            <div class="tips-section">
+                <h4 class="tips-title">
+                    <i class="fas fa-info-circle"></i>
+                    Dicas de Uso
+                </h4>
+                <div class="tips-content">
+                    <p><strong>Controle de Estilo:</strong> Use instruções como "Say cheerfully:" no início do texto ou no campo de estilo.</p>
+                    <br>
+                    <p><strong>Vozes Únicas:</strong> Cada voz tem características específicas. Experimente diferentes combinações!</p>
+                    <br>
+                    <p><strong>Linguagem Natural:</strong> O Gemini entende instruções em português e inglês.</p>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        let voices = [];
+        let selectedVoice = null;
+        let currentAudio = null;
+
+        // Carregar vozes Gemini
+        async function loadGeminiVoices() {
+            try {
+                const response = await fetch('/api/v2/voices/gemini');
+                const data = await response.json();
+                
+                if (data.success) {
+                    voices = data.voices;
+                    populateVoiceSelect();
+                    populateVoiceGrid();
+                } else {
+                    showError('Erro ao carregar vozes Gemini');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                showError('Erro de conexão com o servidor');
+            }
+        }
+
+        // Popular select de vozes
+        function populateVoiceSelect() {
+            const select = document.getElementById('voice-select');
+            select.innerHTML = '<option value="">Selecione uma voz...</option>';
+            
+            voices.forEach(voice => {
+                const option = document.createElement('option');
+                option.value = voice.name;
+                option.textContent = `${voice.name} (${voice.style})`;
+                select.appendChild(option);
+            });
+        }
+
+        // Popular grid de vozes
+        function populateVoiceGrid() {
+            const grid = document.getElementById('voice-grid');
+            grid.innerHTML = '';
+            
+            voices.forEach(voice => {
+                const card = document.createElement('div');
+                card.className = 'voice-card';
+                card.onclick = () => selectVoice(voice.name);
+                
+                card.innerHTML = `
+                    <div class="voice-name">${voice.name}</div>
+                    <div class="voice-style">${voice.style}</div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        // Selecionar voz
+        function selectVoice(voiceName) {
+            selectedVoice = voiceName;
+            document.getElementById('voice-select').value = voiceName;
+            
+            // Atualizar visual
+            document.querySelectorAll('.voice-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            event.target.closest('.voice-card').classList.add('selected');
+        }
+
+        // Definir estilo
+        function setStyle(style) {
+            document.getElementById('style-input').value = style;
+        }
+
+        // Gerar áudio
+        async function generateAudio() {
+            const text = document.getElementById('text-input').value.trim();
+            const voiceName = document.getElementById('voice-select').value;
+            const style = document.getElementById('style-input').value.trim();
+            
+            if (!text) {
+                showError('Por favor, digite um texto');
+                return;
+            }
+            
+            if (!voiceName) {
+                showError('Por favor, selecione uma voz');
+                return;
+            }
+            
+            const generateBtn = document.getElementById('generate-btn');
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = '<div class="loading"></div> Gerando áudio...';
+            
+            try {
+                const response = await fetch('/api/v2/generate-single', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include', // Incluir cookies de sessão
+                    body: JSON.stringify({
+                        text: text,
+                        voiceName: voiceName,
+                        style: style || null
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showSuccess('Áudio gerado com sucesso!');
+                    setupAudioPlayer(data.audio);
+                } else {
+                    showError(data.error || 'Erro ao gerar áudio');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                showError('Erro de conexão com o servidor');
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = '<i class="fas fa-magic"></i> Gerar Áudio com Gemini';
+            }
+        }
+
+        // Configurar player de áudio
+        function setupAudioPlayer(audioData) {
+            const player = document.getElementById('audio-player');
+            const audioElement = document.getElementById('audio-element');
+            const downloadBtn = document.getElementById('download-btn');
+            
+            audioElement.src = audioData.url;
+            downloadBtn.href = audioData.url;
+            downloadBtn.download = audioData.fileName;
+            
+            player.classList.add('show');
+            currentAudio = audioElement;
+        }
+
+        // Toggle play/pause
+        function togglePlay() {
+            const audio = document.getElementById('audio-element');
+            const playIcon = document.getElementById('play-icon');
+            
+            if (audio.paused) {
+                audio.play();
+                playIcon.className = 'fas fa-pause';
+            } else {
+                audio.pause();
+                playIcon.className = 'fas fa-play';
+            }
+        }
+
+        // Mostrar erro
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
+            
+            const mainContent = document.querySelector('.main-content');
+            mainContent.insertBefore(errorDiv, mainContent.firstChild);
+            
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 5000);
+        }
+
+        // Mostrar sucesso
+        function showSuccess(message) {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success-message';
+            successDiv.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+            
+            const mainContent = document.querySelector('.main-content');
+            mainContent.insertBefore(successDiv, mainContent.firstChild);
+            
+            setTimeout(() => {
+                successDiv.remove();
+            }, 3000);
+        }
+
+        // Atualizar ícone de play quando áudio termina
+        document.addEventListener('DOMContentLoaded', () => {
+            loadGeminiVoices();
+            
+            // Event listener para quando o áudio termina
+            document.getElementById('audio-element').addEventListener('ended', () => {
+                document.getElementById('play-icon').className = 'fas fa-play';
+            });
+        });
+    </script>
+</body>
+</html>

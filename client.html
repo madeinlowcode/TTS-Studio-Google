@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Áudio - Google Cloud Text-to-Speech</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-light-blue: #E9F1FA;
+            --primary-bright-blue: #00ABE4;
+            --white: #FFFFFF;
+            --dark-color: #202124;
+            --gray-color: #5F6368;
+            --danger-color: #EA4335;
+            --border-radius: 12px;
+            --box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Google Sans', 'Segoe UI', Roboto, Arial, sans-serif;
+            background-color: var(--primary-light-blue);
+            color: #202124;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            background: var(--white);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(0, 171, 228, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 171, 228, 0.1);
+        }
+
+        .navbar-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            color: var(--primary-bright-blue);
+            font-weight: 700;
+            font-size: 1.2rem;
+            text-decoration: none;
+        }
+
+        .navbar-brand i {
+            font-size: 1.5rem;
+        }
+
+        .navbar-nav {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #202124;
+            text-decoration: none;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(0, 171, 228, 0.1);
+            color: var(--primary-bright-blue);
+            transform: translateY(-1px);
+        }
+
+        .nav-link.active {
+            background-color: var(--primary-bright-blue);
+            color: var(--white);
+        }
+
+        .nav-link.new-feature {
+            background: var(--primary-bright-blue);
+            color: var(--white);
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link.new-feature::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .nav-link.new-feature:hover::before {
+            left: 100%;
+        }
+
+        .nav-link.new-feature:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .navbar-content {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .navbar-nav {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 0.3rem;
+            }
+
+            .nav-link {
+                padding: 0.5rem 0.8rem;
+                font-size: 0.8rem;
+            }
+
+            .nav-link span {
+                display: none;
+            }
+
+            .navbar-brand span {
+                display: none;
+            }
+        }
+
+        .header {
+            background: var(--primary-bright-blue);
+            color: var(--white);
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+            opacity: 0.9;
+            color: var(--white);
+        }
+
+        .main-content {
+            width: 1400px;
+            max-width: 1400px;
+            min-width: 1400px;
+            margin: -50px auto 2rem;
+            padding: 0 30px;
+            flex: 1;
+        }
+
+        .card {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            border: 1px solid rgba(0, 171, 228, 0.2);
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            transition: var(--transition);
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 650px 650px;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            align-items: stretch;
+            grid-template-rows: 600px;
+            justify-content: center;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .card-fixed-height {
+            width: 650px !important;
+            min-width: 650px !important;
+            max-width: 650px !important;
+            height: 600px !important;
+            min-height: 600px !important;
+            max-height: 600px !important;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .card-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .card-title i {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-right: 0.8rem;
+        }
+
+        .card-title h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #202124;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #202124;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 1.2rem;
+            border: 2px solid rgba(0, 171, 228, 0.2);
+            border-radius: var(--border-radius);
+            min-height: 180px;
+            font-family: inherit;
+            font-size: 1.1rem;
+            resize: vertical;
+            transition: var(--transition);
+            line-height: 1.6;
+            color: #202124;
+            background-color: var(--white);
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-bright-blue);
+            box-shadow: 0 0 0 3px rgba(0, 171, 228, 0.2);
+        }
+
+        .select-wrapper {
+            position: relative;
+        }
+
+        .select-wrapper::after {
+            content: '\f107';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-color);
+            pointer-events: none;
+        }
+
+        select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid rgba(0, 171, 228, 0.2);
+            border-radius: var(--border-radius);
+            background-color: var(--white);
+            appearance: none;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: var(--transition);
+            cursor: pointer;
+            color: #202124;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--primary-bright-blue);
+            box-shadow: 0 0 0 3px rgba(0, 171, 228, 0.2);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-bright-blue);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: #0099CC;
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary:disabled {
+            background-color: #A8C7FA;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 1.5rem 0;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(66, 133, 244, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .result {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid rgba(0, 171, 228, 0.2);
+            border-radius: var(--border-radius);
+            background-color: var(--white);
+        }
+
+        .no-result {
+            text-align: center;
+            color: var(--gray-color);
+            padding: 2rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .no-result i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        .result-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 400px;
+            position: relative;
+        }
+
+        .result h3 {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #00ABE4;
+            font-weight: 600;
+        }
+
+        .audio-container {
+            background-color: #f8f9fa;
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .audio-player {
+            width: 100%;
+            height: 50px;
+            border-radius: var(--border-radius);
+        }
+
+        .download-link {
+            display: inline-flex;
+            align-items: center;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            background-color: rgba(66, 133, 244, 0.1);
+            transition: var(--transition);
+            gap: 0.5rem;
+        }
+
+        .download-link:hover {
+            background-color: rgba(66, 133, 244, 0.2);
+        }
+
+        .error {
+            display: none;
+            background-color: rgba(234, 67, 53, 0.1);
+            color: var(--danger-color);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin: 1rem 0;
+            font-weight: 500;
+        }
+
+        .history-section {
+            margin-top: 2rem;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .history-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #202124;
+        }
+
+        .history-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .history-item {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 171, 228, 0.2);
+            padding: 1rem;
+            transition: var(--transition);
+            border-top: 4px solid #00ABE4;
+        }
+
+        .history-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .history-text {
+            margin-bottom: 0.8rem;
+            font-size: 0.9rem;
+            color: var(--gray-color);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .history-date {
+            font-size: 0.8rem;
+            color: var(--gray-color);
+            margin-bottom: 0.8rem;
+        }
+
+        .history-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .history-actions button {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            padding: 0.3rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .history-actions button:hover {
+            background-color: rgba(66, 133, 244, 0.1);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: white;
+            color: var(--gray-color);
+            margin-top: auto;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        @media (max-width: 1450px) {
+            .main-content {
+                width: 1000px;
+                max-width: 1000px;
+                min-width: 1000px;
+                padding: 0 25px;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                grid-template-rows: 500px 500px;
+                justify-content: center;
+            }
+
+            .card-fixed-height {
+                width: 950px !important;
+                min-width: 950px !important;
+                max-width: 950px !important;
+                height: 500px !important;
+                min-height: 500px !important;
+                max-height: 500px !important;
+            }
+        }
+
+        @media (max-width: 1050px) {
+            .main-content {
+                width: 100%;
+                max-width: 100%;
+                min-width: auto;
+                padding: 0 20px;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                grid-template-rows: 450px 450px;
+                justify-content: center;
+            }
+
+            .card-fixed-height {
+                width: 100% !important;
+                min-width: auto !important;
+                max-width: 600px !important;
+                height: 450px !important;
+                min-height: 450px !important;
+                max-height: 450px !important;
+                margin: 0 auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 1.5rem 0;
+            }
+
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .main-content {
+                margin-top: -30px;
+                padding: 0 15px;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            .card-fixed-height {
+                max-width: 100% !important;
+                height: 400px !important;
+                min-height: 400px !important;
+                max-height: 400px !important;
+            }
+
+            .content-grid {
+                grid-template-rows: 400px 400px;
+            }
+
+            .history-list {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            textarea {
+                min-height: 120px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="/client.html" class="navbar-brand">
+                <i class="fas fa-microphone"></i>
+                <span>TTS Clássico</span>
+            </a>
+            <div class="navbar-nav">
+                <a href="/pages/dashboard.html" class="nav-link new-feature">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/pages/gemini-studio.html" class="nav-link new-feature">
+                    <i class="fas fa-magic"></i>
+                    <span>Gemini Studio</span>
+                </a>
+                <a href="/pages/multi-speaker.html" class="nav-link new-feature">
+                    <i class="fas fa-users"></i>
+                    <span>Multi-Speaker</span>
+                </a>
+                <a href="/pages/voice-lab.html" class="nav-link new-feature">
+                    <i class="fas fa-flask"></i>
+                    <span>Voice Lab</span>
+                </a>
+                <a href="/client.html" class="nav-link active">
+                    <i class="fas fa-microphone-alt"></i>
+                    <span>Clássico</span>
+                </a>
+                <a href="/auth/logout" class="nav-link">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Sair</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="header">
+        <h1>Gerador de Áudio</h1>
+        <p>Converta texto em áudio de alta qualidade com a API Google Cloud Text-to-Speech</p>
+    </header>
+
+    <main class="main-content">
+        <div class="content-grid">
+            <div class="card card-fixed-height">
+                <div class="card-title">
+                    <i class="fas fa-microphone-alt"></i>
+                    <h2>Gerar Novo Áudio</h2>
+                </div>
+
+                <div class="card-content">
+                    <div class="form-group">
+                        <label for="text">Digite o texto para gerar áudio:</label>
+                        <textarea id="text" placeholder="Digite aqui o texto que você deseja converter em áudio..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="voice">Selecione a voz:</label>
+                        <div class="select-wrapper">
+                            <select id="voice">
+                                <option value="">Carregando vozes...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button id="generate" class="btn btn-primary">
+                        <i class="fas fa-play"></i> Gerar Áudio
+                    </button>
+
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Gerando áudio, por favor aguarde...</p>
+                    </div>
+
+                    <div class="error" id="error-message"></div>
+                </div>
+            </div>
+
+            <div class="card card-fixed-height">
+                <div class="card-title">
+                    <i class="fas fa-volume-up"></i>
+                    <h2>Resultado</h2>
+                </div>
+
+                <div class="result-container">
+                    <div class="result" id="result">
+                        <h3><i class="fas fa-check-circle"></i> Áudio gerado com sucesso</h3>
+                        <div class="audio-container">
+                            <audio controls class="audio-player" id="audio-player"></audio>
+                        </div>
+                        <a href="#" id="download-link" class="download-link" download>
+                            <i class="fas fa-download"></i> Baixar áudio
+                        </a>
+                    </div>
+
+                    <div id="no-result" class="no-result">
+                        <i class="fas fa-music"></i>
+                        <p>Nenhum áudio gerado ainda.<br>Digite um texto e clique em "Gerar Áudio" para começar.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card history-section full-width" id="history">
+            <div class="history-header">
+                <h2><i class="fas fa-history"></i> Histórico de Áudios</h2>
+            </div>
+            <div class="history-list" id="history-list"></div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 Gerador de Áudio com Google Cloud Text-to-Speech</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const generateBtn = document.getElementById('generate');
+            const textInput = document.getElementById('text');
+            const voiceSelect = document.getElementById('voice');
+            const loading = document.querySelector('.loading');
+            const result = document.getElementById('result');
+            const audioPlayer = document.getElementById('audio-player');
+            const downloadLink = document.getElementById('download-link');
+            const historyList = document.getElementById('history-list');
+            const errorMessage = document.getElementById('error-message');
+            const noResult = document.getElementById('no-result');
+
+            // Carregar vozes disponíveis e histórico de áudios ao iniciar
+            loadVoices();
+            loadAudioHistory();
+
+            // Adicionar event listener para o botão de gerar áudio
+            generateBtn.addEventListener('click', generateAudio);
+
+            // Função para carregar vozes disponíveis
+            async function loadVoices() {
+                try {
+                    generateBtn.disabled = true;
+                    generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Carregando vozes...';
+
+                    const response = await fetch('/api/voices');
+                    const data = await response.json();
+
+                    if (data.success && data.voices) {
+                        voiceSelect.innerHTML = '';
+
+                        // Ordenar vozes por nome
+                        const voices = data.voices.sort((a, b) => a.name.localeCompare(b.name));
+
+                        // Agrupar vozes por gênero
+                        const femaleVoices = voices.filter(voice => voice.gender === 'FEMALE');
+                        const maleVoices = voices.filter(voice => voice.gender === 'MALE');
+                        const otherVoices = voices.filter(voice => !['MALE', 'FEMALE'].includes(voice.gender));
+
+                        // Criar grupos
+                        if (femaleVoices.length > 0) {
+                            const femaleGroup = document.createElement('optgroup');
+                            femaleGroup.label = 'Vozes Femininas';
+                            femaleVoices.forEach(voice => {
+                                const option = document.createElement('option');
+                                option.value = voice.name;
+                                option.textContent = voice.name.replace('pt-BR-', '');
+                                femaleGroup.appendChild(option);
+                            });
+                            voiceSelect.appendChild(femaleGroup);
+                        }
+
+                        if (maleVoices.length > 0) {
+                            const maleGroup = document.createElement('optgroup');
+                            maleGroup.label = 'Vozes Masculinas';
+                            maleVoices.forEach(voice => {
+                                const option = document.createElement('option');
+                                option.value = voice.name;
+                                option.textContent = voice.name.replace('pt-BR-', '');
+                                maleGroup.appendChild(option);
+                            });
+                            voiceSelect.appendChild(maleGroup);
+                        }
+
+                        if (otherVoices.length > 0) {
+                            const otherGroup = document.createElement('optgroup');
+                            otherGroup.label = 'Outras Vozes';
+                            otherVoices.forEach(voice => {
+                                const option = document.createElement('option');
+                                option.value = voice.name;
+                                option.textContent = voice.name.replace('pt-BR-', '');
+                                otherGroup.appendChild(option);
+                            });
+                            voiceSelect.appendChild(otherGroup);
+                        }
+                    } else {
+                        throw new Error('Falha ao carregar vozes');
+                    }
+                } catch (error) {
+                    console.error('Erro ao carregar vozes:', error);
+                    voiceSelect.innerHTML = '<option value="">Erro ao carregar vozes</option>';
+                    showError('Não foi possível carregar a lista de vozes. Por favor, recarregue a página.');
+                } finally {
+                    generateBtn.disabled = false;
+                    generateBtn.innerHTML = '<i class="fas fa-play"></i> Gerar Áudio';
+                }
+            }
+
+            // Função para gerar áudio
+            async function generateAudio() {
+                const text = textInput.value.trim();
+                const voiceName = voiceSelect.value;
+
+                // Validar entrada
+                if (!text) {
+                    showError('Por favor, digite o texto para gerar áudio.');
+                    return;
+                }
+
+                if (!voiceName) {
+                    showError('Por favor, selecione uma voz.');
+                    return;
+                }
+
+                try {
+                    // Mostrar loading
+                    loading.style.display = 'block';
+                    result.style.display = 'none';
+                    noResult.style.display = 'none';
+                    errorMessage.style.display = 'none';
+                    generateBtn.disabled = true;
+                    generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...';
+
+                    // Fazer requisição para gerar áudio
+                    const response = await fetch('/api/generate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            text: text,
+                            voiceName: voiceName
+                        })
+                    });
+
+                    // Verificar se a resposta é JSON válido
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        if (response.status === 401) {
+                            throw new Error('Sessão expirada');
+                        }
+                        throw new Error('Resposta inválida do servidor');
+                    }
+
+                    const data = await response.json();
+
+                    if (data.success && data.audio) {
+                        // Configurar player de áudio
+                        const audioUrl = data.audio.url;
+                        audioPlayer.src = audioUrl;
+                        downloadLink.href = audioUrl;
+                        downloadLink.download = data.audio.fileName;
+
+                        // Mostrar resultado
+                        result.style.display = 'block';
+                        noResult.style.display = 'none';
+
+                        // Adicionar ao histórico
+                        addToHistory(text, audioUrl, data.audio.fileName, data.audio.createdAt);
+
+                        // Limpar formulário
+                        textInput.value = '';
+                        voiceSelect.selectedIndex = 0;
+
+                    } else {
+                        throw new Error(data.error || 'Erro ao gerar áudio');
+                    }
+
+                } catch (error) {
+                    console.error('Erro ao gerar áudio:', error);
+
+                    // Verificar se é erro de autenticação
+                    if (error.message.includes('Sessão expirada')) {
+                        showError('Sessão expirada. Redirecionando para login...');
+                        setTimeout(() => {
+                            window.location.href = '/login.html';
+                        }, 2000);
+                    } else if (error.message.includes('Unexpected token') || error.message.includes('<!DOCTYPE')) {
+                        showError('Erro de comunicação com o servidor. Redirecionando...');
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                    } else {
+                        showError('Erro ao gerar áudio: ' + error.message);
+                    }
+                    noResult.style.display = 'block';
+                } finally {
+                    // Esconder loading
+                    loading.style.display = 'none';
+                    generateBtn.disabled = false;
+                    generateBtn.innerHTML = '<i class="fas fa-play"></i> Gerar Áudio';
+                }
+            }
+
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorMessage.style.display = 'block';
+
+                // Animar o erro
+                errorMessage.animate([
+                    { opacity: 0, transform: 'translateY(-10px)' },
+                    { opacity: 1, transform: 'translateY(0)' }
+                ], {
+                    duration: 300,
+                    easing: 'ease-out'
+                });
+            }
+
+            function addToHistory(text, audioUrl, fileName, createdAt) {
+                // Criar item do histórico
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+
+                const date = new Date(createdAt);
+                const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+
+                historyItem.innerHTML = `
+                    <div class="history-text">"${text}"</div>
+                    <div class="history-date"><i class="fas fa-calendar-alt"></i> ${formattedDate}</div>
+                    <div class="history-actions">
+                        <button class="play-btn" title="Reproduzir"><i class="fas fa-play"></i> Ouvir</button>
+                        <button class="download-btn" title="Baixar"><i class="fas fa-download"></i> Baixar</button>
+                    </div>
+                `;
+
+                // Adicionar eventos aos botões
+                const playBtn = historyItem.querySelector('.play-btn');
+                const downloadBtn = historyItem.querySelector('.download-btn');
+
+                playBtn.addEventListener('click', function() {
+                    audioPlayer.src = audioUrl;
+                    audioPlayer.play();
+                    result.style.display = 'block';
+
+                    // Rolar até o player
+                    result.scrollIntoView({ behavior: 'smooth' });
+                });
+
+                downloadBtn.addEventListener('click', function() {
+                    const tempLink = document.createElement('a');
+                    tempLink.href = audioUrl;
+                    tempLink.download = fileName;
+                    tempLink.click();
+                });
+
+                // Adicionar ao topo da lista
+                historyList.insertBefore(historyItem, historyList.firstChild);
+
+                // Salvar no histórico local
+                saveToHistory(text, audioUrl, fileName, createdAt);
+            }
+
+            function saveToHistory(text, audioUrl, fileName, createdAt) {
+                let history = JSON.parse(localStorage.getItem('audioHistory') || '[]');
+                history.unshift({
+                    text,
+                    audioUrl,
+                    fileName,
+                    createdAt
+                });
+
+                // Limitar a 10 itens
+                if (history.length > 10) {
+                    history = history.slice(0, 10);
+                }
+
+                localStorage.setItem('audioHistory', JSON.stringify(history));
+            }
+
+            function loadAudioHistory() {
+                // Carregar histórico do localStorage
+                const history = JSON.parse(localStorage.getItem('audioHistory') || '[]');
+
+                // Verificar se há itens no histórico
+                if (history.length === 0) {
+                    // Alternativamente, fazer uma requisição para a API para obter os áudios gerados
+                    fetch('/api/audios')
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success && data.audios && data.audios.length > 0) {
+                                data.audios.forEach(audio => {
+                                    const audioUrl = audio.url;
+                                    const historyItem = document.createElement('div');
+                                    historyItem.className = 'history-item';
+
+                                    const date = new Date(audio.createdAt);
+                                    const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+
+                                    historyItem.innerHTML = `
+                                        <audio controls src="${audioUrl}"></audio>
+                                        <p>
+                                            <small>${formattedDate}</small> |
+                                            <a href="${audioUrl}" download="${audio.fileName}">Baixar áudio</a>
+                                        </p>
+                                    `;
+
+                                    historyList.appendChild(historyItem);
+                                });
+                            } else {
+                                historyList.innerHTML = '<p>Nenhum áudio gerado ainda.</p>';
+                            }
+                        })
+                        .catch(() => {
+                            historyList.innerHTML = '<p>Não foi possível carregar o histórico de áudios.</p>';
+                        });
+                } else {
+                    // Exibir histórico do localStorage
+                    history.forEach(item => {
+                        const historyItem = document.createElement('div');
+                        historyItem.className = 'history-item';
+
+                        const date = new Date(item.createdAt);
+                        const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+
+                        historyItem.innerHTML = `
+                            <div class="history-text">"${item.text}"</div>
+                            <audio controls src="${item.audioUrl}"></audio>
+                            <p>
+                                <small>${formattedDate}</small> |
+                                <a href="${item.audioUrl}" download="${item.fileName}">Baixar áudio</a>
+                            </p>
+                        `;
+
+                        historyList.appendChild(historyItem);
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TTS Studio - Dashboard Unificado</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #E9F1FA;
+            min-height: 100vh;
+            color: #202124;
+        }
+
+        .header {
+            background: #FFFFFF;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid rgba(0, 171, 228, 0.2);
+            box-shadow: 0 2px 10px rgba(0, 171, 228, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: #202124;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .logo i {
+            font-size: 2rem;
+            color: #00ABE4;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #202124;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: rgba(0, 171, 228, 0.1);
+            color: #00ABE4;
+            transform: translateY(-2px);
+        }
+
+        .classic-tts-link {
+            background: #00ABE4;
+            color: #FFFFFF;
+            font-weight: 600;
+        }
+
+        .classic-tts-link:hover {
+            background: #0099CC;
+            color: #FFFFFF;
+        }
+
+        .stats-title {
+            color: #00ABE4;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .welcome-section h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #202124;
+            font-weight: 700;
+        }
+
+        .welcome-section p {
+            font-size: 1.2rem;
+            color: #5F6368;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .status-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .status-card {
+            background: #FFFFFF;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 2px solid rgba(0, 171, 228, 0.2);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 171, 228, 0.1);
+        }
+
+        .status-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 171, 228, 0.2);
+            border-color: #00ABE4;
+        }
+
+        .status-card h3 {
+            color: #202124;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-left: auto;
+        }
+
+        .status-available {
+            background: #4ade80;
+            box-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+        }
+
+        .status-unavailable {
+            background: #f87171;
+            box-shadow: 0 0 10px rgba(248, 113, 113, 0.5);
+        }
+
+        .status-info {
+            color: #5F6368;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .feature-card {
+            background: #FFFFFF;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 2px solid rgba(0, 171, 228, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 171, 228, 0.1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 171, 228, 0.2);
+            border-color: #00ABE4;
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #00ABE4;
+        }
+
+        .feature-card h3 {
+            color: #202124;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .feature-card p {
+            color: #5F6368;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-stats {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat {
+            background: rgba(0, 171, 228, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #00ABE4;
+            font-weight: 500;
+        }
+
+        .cta-button {
+            background: #00ABE4;
+            color: #FFFFFF;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .cta-button:hover {
+            background: #0099CC;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 171, 228, 0.3);
+        }
+
+        .stats-overview {
+            background: #FFFFFF;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 2px solid rgba(0, 171, 228, 0.2);
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 171, 228, 0.1);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #202124;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #5F6368;
+            font-size: 0.9rem;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 171, 228, 0.3);
+            border-radius: 50%;
+            border-top-color: #00ABE4;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: rgba(248, 113, 113, 0.2);
+            border: 1px solid rgba(248, 113, 113, 0.5);
+            color: #fecaca;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .welcome-section h1 {
+                font-size: 2rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-microphone-alt"></i>
+                <span>TTS Studio</span>
+            </div>
+            <nav class="nav-links">
+                <a href="/pages/dashboard.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/pages/gemini-studio.html" class="nav-link">
+                    <i class="fas fa-magic"></i>
+                    <span>Gemini Studio</span>
+                </a>
+                <a href="/pages/multi-speaker.html" class="nav-link">
+                    <i class="fas fa-users"></i>
+                    <span>Multi-Speaker</span>
+                </a>
+                <a href="/pages/voice-lab.html" class="nav-link">
+                    <i class="fas fa-flask"></i>
+                    <span>Voice Lab</span>
+                </a>
+                <a href="/pages/api-docs.html" class="nav-link">
+                    <i class="fas fa-code"></i>
+                    <span>API Docs</span>
+                </a>
+                <a href="/client.html" class="nav-link classic-tts-link">
+                    <i class="fas fa-microphone-alt"></i>
+                    <span>TTS Clássico</span>
+                </a>
+                <a href="/auth/logout" class="nav-link">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Sair</span>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <section class="welcome-section">
+            <h1>Bem-vindo ao TTS Studio</h1>
+            <p>Plataforma unificada de conversão de texto em voz com tecnologia Gemini 2.5 e Google Cloud TTS</p>
+        </section>
+
+        <section class="status-cards">
+            <div class="status-card">
+                <h3>
+                    <i class="fas fa-magic"></i>
+                    Gemini 2.5 TTS
+                    <div class="status-indicator" id="gemini-status"></div>
+                </h3>
+                <div class="status-info" id="gemini-info">
+                    <div class="loading"></div> Verificando status...
+                </div>
+            </div>
+
+            <div class="status-card">
+                <h3>
+                    <i class="fas fa-cloud"></i>
+                    Google Cloud TTS
+                    <div class="status-indicator" id="google-status"></div>
+                </h3>
+                <div class="status-info" id="google-info">
+                    <div class="loading"></div> Verificando status...
+                </div>
+            </div>
+
+            <div class="status-card">
+                <h3>
+                    <i class="fas fa-cogs"></i>
+                    Sistema Unificado
+                    <div class="status-indicator" id="unified-status"></div>
+                </h3>
+                <div class="status-info" id="unified-info">
+                    <div class="loading"></div> Verificando status...
+                </div>
+            </div>
+        </section>
+
+        <section class="stats-overview">
+            <h2 class="stats-title">
+                <i class="fas fa-chart-bar"></i> Estatísticas do Sistema
+            </h2>
+            <div class="stats-grid" id="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number" id="total-voices">
+                        <div class="loading"></div>
+                    </div>
+                    <div class="stat-label">Total de Vozes</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="gemini-voices">
+                        <div class="loading"></div>
+                    </div>
+                    <div class="stat-label">Vozes Gemini</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="google-voices">
+                        <div class="loading"></div>
+                    </div>
+                    <div class="stat-label">Vozes Google Cloud</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="total-audios">
+                        <div class="loading"></div>
+                    </div>
+                    <div class="stat-label">Áudios Gerados</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features-grid">
+            <div class="feature-card" onclick="window.location.href='/pages/gemini-studio.html'">
+                <div class="feature-icon">
+                    <i class="fas fa-magic"></i>
+                </div>
+                <h3>Gemini Studio</h3>
+                <p>Interface avançada para Gemini 2.5 TTS com controle de estilo via linguagem natural e 30 vozes únicas.</p>
+                <div class="feature-stats">
+                    <span class="stat">30 Vozes</span>
+                    <span class="stat">Controle de Estilo</span>
+                    <span class="stat">IA Avançada</span>
+                </div>
+                <a href="/pages/gemini-studio.html" class="cta-button">
+                    <i class="fas fa-arrow-right"></i>
+                    Explorar Gemini
+                </a>
+            </div>
+
+            <div class="feature-card" onclick="window.location.href='/pages/multi-speaker.html'">
+                <div class="feature-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>Multi-Speaker</h3>
+                <p>Crie diálogos e conversações com até 2 vozes diferentes simultaneamente. Perfeito para podcasts e audiobooks.</p>
+                <div class="feature-stats">
+                    <span class="stat">2 Speakers</span>
+                    <span class="stat">Diálogos</span>
+                    <span class="stat">Conversações</span>
+                </div>
+                <a href="/pages/multi-speaker.html" class="cta-button">
+                    <i class="fas fa-arrow-right"></i>
+                    Criar Diálogo
+                </a>
+            </div>
+
+            <div class="feature-card" onclick="window.location.href='/pages/voice-lab.html'">
+                <div class="feature-icon">
+                    <i class="fas fa-flask"></i>
+                </div>
+                <h3>Voice Lab</h3>
+                <p>Laboratório para explorar, comparar e testar todas as 73 vozes disponíveis com filtros avançados.</p>
+                <div class="feature-stats">
+                    <span class="stat">73 Vozes</span>
+                    <span class="stat">Comparação</span>
+                    <span class="stat">Filtros</span>
+                </div>
+                <a href="/pages/voice-lab.html" class="cta-button">
+                    <i class="fas fa-arrow-right"></i>
+                    Explorar Vozes
+                </a>
+            </div>
+
+            <div class="feature-card" onclick="window.location.href='/client.html'">
+                <div class="feature-icon">
+                    <i class="fas fa-microphone"></i>
+                </div>
+                <h3>Classic TTS</h3>
+                <p>Interface tradicional com Google Cloud TTS. Confiável e estável para uso profissional e cotidiano.</p>
+                <div class="feature-stats">
+                    <span class="stat">Tradicional</span>
+                    <span class="stat">Confiável</span>
+                    <span class="stat">Profissional</span>
+                </div>
+                <a href="/client.html" class="cta-button">
+                    <i class="fas fa-arrow-right"></i>
+                    Usar Classic
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Carregar status dos sistemas
+        async function loadSystemStatus() {
+            try {
+                const response = await fetch('/api/v2/status');
+                const data = await response.json();
+                
+                if (data.success) {
+                    updateSystemStatus(data.systems);
+                    updateStatistics(data.statistics);
+                } else {
+                    showError('Erro ao carregar status dos sistemas');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                showError('Erro de conexão com o servidor');
+            }
+        }
+
+        // Atualizar status dos sistemas
+        function updateSystemStatus(systems) {
+            // Gemini Status
+            const geminiStatus = document.getElementById('gemini-status');
+            const geminiInfo = document.getElementById('gemini-info');
+            
+            if (systems.gemini.available) {
+                geminiStatus.className = 'status-indicator status-available';
+                geminiInfo.innerHTML = `
+                    <strong>✅ Disponível</strong><br>
+                    ${systems.gemini.features.join(' • ')}
+                `;
+            } else {
+                geminiStatus.className = 'status-indicator status-unavailable';
+                geminiInfo.innerHTML = '<strong>❌ Indisponível</strong><br>Verifique a configuração da API Key';
+            }
+
+            // Google Cloud Status
+            const googleStatus = document.getElementById('google-status');
+            const googleInfo = document.getElementById('google-info');
+            
+            if (systems.googleCloud.available) {
+                googleStatus.className = 'status-indicator status-available';
+                googleInfo.innerHTML = `
+                    <strong>✅ Disponível</strong><br>
+                    ${systems.googleCloud.features.join(' • ')}
+                `;
+            } else {
+                googleStatus.className = 'status-indicator status-unavailable';
+                googleInfo.innerHTML = '<strong>❌ Indisponível</strong><br>Verifique as credenciais do Google Cloud';
+            }
+
+            // Unified Status
+            const unifiedStatus = document.getElementById('unified-status');
+            const unifiedInfo = document.getElementById('unified-info');
+            
+            if (systems.unified.available) {
+                unifiedStatus.className = 'status-indicator status-available';
+                unifiedInfo.innerHTML = `
+                    <strong>✅ Operacional</strong><br>
+                    Sistema preferido: <strong>${systems.unified.preferredSystem}</strong>
+                `;
+            } else {
+                unifiedStatus.className = 'status-indicator status-unavailable';
+                unifiedInfo.innerHTML = '<strong>❌ Indisponível</strong><br>Nenhum sistema TTS disponível';
+            }
+        }
+
+        // Atualizar estatísticas
+        function updateStatistics(stats) {
+            document.getElementById('total-voices').textContent = stats.systems.unified.available ? '73' : '0';
+            document.getElementById('gemini-voices').textContent = stats.systems.gemini.available ? '30' : '0';
+            document.getElementById('google-voices').textContent = stats.systems.googleCloud.available ? '43' : '0';
+            document.getElementById('total-audios').textContent = stats.totalRequests || '0';
+        }
+
+        // Carregar estatísticas de vozes
+        async function loadVoiceStats() {
+            try {
+                const response = await fetch('/api/v2/voices/all');
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('total-voices').textContent = data.summary.total;
+                    document.getElementById('gemini-voices').textContent = data.summary.gemini;
+                    document.getElementById('google-voices').textContent = data.summary.googleCloud;
+                }
+            } catch (error) {
+                console.error('Erro ao carregar estatísticas de vozes:', error);
+            }
+        }
+
+        // Carregar estatísticas de áudios
+        async function loadAudioStats() {
+            try {
+                const response = await fetch('/api/v2/audios', {
+                    credentials: 'include' // Incluir cookies de sessão
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('total-audios').textContent = data.summary.total;
+                }
+            } catch (error) {
+                // Não autenticado - mostrar 0
+                document.getElementById('total-audios').textContent = '0';
+            }
+        }
+
+        // Mostrar erro
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
+            
+            const container = document.querySelector('.container');
+            container.insertBefore(errorDiv, container.firstChild);
+            
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 5000);
+        }
+
+        // Inicializar dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSystemStatus();
+            loadVoiceStats();
+            loadAudioStats();
+        });
+    </script>
+</body>
+</html>

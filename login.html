@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Gerador de Áudio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-light-blue: #E9F1FA;
+            --primary-bright-blue: #00ABE4;
+            --white: #FFFFFF;
+            --dark-color: #202124;
+            --gray-color: #5F6368;
+            --danger-color: #EA4335;
+            --border-radius: 12px;
+            --box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Google Sans', 'Segoe UI', Roboto, Arial, sans-serif;
+            background-color: var(--primary-light-blue);
+            color: var(--dark-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .login-container {
+            max-width: 400px;
+            width: 90%;
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 2.5rem;
+            text-align: center;
+            transition: var(--transition);
+        }
+        
+        .login-logo {
+            margin-bottom: 1.5rem;
+        }
+        
+        .login-logo i {
+            font-size: 3rem;
+            color: var(--primary-bright-blue);
+            margin-bottom: 1rem;
+        }
+        
+        .login-logo h1 {
+            font-size: 1.8rem;
+            color: #202124;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .login-logo p {
+            color: #5F6368;
+            font-size: 0.9rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #202124;
+        }
+        
+        .input-group {
+            position: relative;
+        }
+        
+        .input-group i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #5F6368;
+        }
+        
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 1rem 1rem 1rem 2.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: var(--transition);
+            color: #202124;
+            background-color: var(--white);
+        }
+        
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: var(--primary-bright-blue);
+            box-shadow: 0 0 0 3px rgba(0, 171, 228, 0.2);
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-bright-blue);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: #0099CC;
+            transform: translateY(-2px);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        .error-message {
+            display: none;
+            background-color: rgba(234, 67, 53, 0.1);
+            color: var(--danger-color);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin: 1rem 0;
+            font-weight: 500;
+            text-align: left;
+        }
+        
+        .footer {
+            margin-top: 2rem;
+            color: var(--gray-color);
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-logo">
+            <i class="fas fa-microphone-alt"></i>
+            <h1>Gerador de Áudio</h1>
+            <p>Acesse o sistema para converter texto em áudio</p>
+        </div>
+        
+        <form id="login-form" action="/auth/login" method="POST">
+            <div class="form-group">
+                <label for="username">Usuário</label>
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="username" name="username" placeholder="Digite seu usuário" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" name="password" placeholder="Digite sua senha" required>
+                </div>
+            </div>
+            
+            <div class="error-message" id="error-message"></div>
+            
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-sign-in-alt"></i> Entrar
+            </button>
+        </form>
+        
+        <div class="footer">
+            <p>&copy; 2025 Gerador de Áudio com Google Cloud Text-to-Speech</p>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('login-form');
+            const errorMessage = document.getElementById('error-message');
+            
+            // Verificar se há um erro na URL (redirecionamento após falha de login)
+            const urlParams = new URLSearchParams(window.location.search);
+            const error = urlParams.get('error');
+            
+            if (error) {
+                let message = 'Ocorreu um erro durante o login.';
+                
+                // Mensagens de erro específicas
+                if (error === '1') {
+                    message = 'Usuário ou senha incorretos. Tente novamente.';
+                } else if (error === '2') {
+                    message = 'Erro interno do servidor. Tente novamente mais tarde.';
+                } else if (error === '3') {
+                    message = 'Dados de login incompletos. Preencha todos os campos.';
+                }
+                
+                errorMessage.textContent = message;
+                errorMessage.style.display = 'block';
+            }
+            
+            loginForm.addEventListener('submit', function(event) {
+                const username = document.getElementById('username').value.trim();
+                const password = document.getElementById('password').value.trim();
+                
+                if (!username || !password) {
+                    event.preventDefault();
+                    errorMessage.textContent = 'Por favor, preencha todos os campos.';
+                    errorMessage.style.display = 'block';
+                }
+                
+                console.log('Enviando formulário de login:', { username, password: '***' });
+            });
+        });
+    </script>
+</body>
+</html>

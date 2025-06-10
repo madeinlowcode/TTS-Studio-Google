@@ -1,0 +1,44 @@
+{
+  "name": "api-voz-google",
+  "version": "1.0.0",
+  "description": "API para gerar áudio a partir de texto usando Google Cloud Text-to-Speech",
+  "main": "server-express.js",
+  "scripts": {
+    "start": "node server-express.js",
+    "dev": "nodemon server-express.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "api",
+    "google",
+    "gemini",
+    "tts",
+    "audio"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/text-to-speech": "^6.1.0",
+    "@google/genai": "^1.0.1",
+    "@google/generative-ai": "^0.24.1",
+    "axios": "^1.9.0",
+    "bcryptjs": "^3.0.2",
+    "cookie-parser": "^1.4.7",
+    "cors": "2.8.5",
+    "dotenv": "16.3.1",
+    "express": "^4.18.2",
+    "express-session": "^1.18.1",
+    "ffmpeg-static": "^5.2.0",
+    "mime": "^3.0.0",
+    "puppeteer": "^24.10.0",
+    "uuid": "9.0.1",
+    "wav": "^1.0.2"
+  },
+  "devDependencies": {
+    "@types/mime": "^3.0.4",
+    "@types/node": "^22.15.21",
+    "nodemon": "3.0.1",
+    "typescript": "^5.8.3"
+  },
+  "type": "commonjs"
+}
