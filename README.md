@@ -91,7 +91,8 @@ curl -H "X-API-Key: sua_api_key" \
 3. Clica na aba Chaves
 4. Clique na opção "Adicionar chave" e depois na opção "Criar nova chave"
 5. Baixe o arquivo JSON das credenciais
-6. Coloque em: `google/nome do seu arquivo.json`
+6. Renomeie o JSON para madeinlowcode.json
+7. Coloque o arquivo JSON na pasta: `google/madeinlowcode.json`
 
 ### **2️⃣ Configuração do Gemini TTS (Opcional)**
 
