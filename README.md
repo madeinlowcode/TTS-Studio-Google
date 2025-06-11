@@ -88,8 +88,10 @@ curl -H "X-API-Key: sua_api_key" \
 #### **Criar Conta de Serviço:**
 1. IAM & Admin → Service Accounts
 2. Create Service Account
-3. Baixe o arquivo JSON das credenciais
-4. Coloque em: `google/madeinlowcode.json`
+3. Clica na aba Chaves
+4. Clique na opção "Adicionar chave" e depois na opção "Criar nova chave"
+5. Baixe o arquivo JSON das credenciais
+6. Coloque em: `google/nome do seu arquivo.json`
 
 ### **2️⃣ Configuração do Gemini TTS (Opcional)**
 
